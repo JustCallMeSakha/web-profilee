@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>Web Profile | Sakha</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial, Helvetica, sans-serif; }
+body { min-height:100vh; overflow-x:hidden; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color:#fff; animation: gradientBG 15s ease infinite; background-size:200% 200%; }
+
+@keyframes gradientBG { 0% { background-position:0% 50%; } 50% { background-position:100% 50%; } 100% { background-position:0% 50%; } }
+@keyframes fadeInUp {0%{opacity:0; transform:translateY(20px);} 100%{opacity:1; transform:translateY(0);} }
+@keyframes slideInLeft {0%{opacity:0; transform:translateX(-50px);} 100%{opacity:1; transform:translateX(0);}}
+
+.container, .project-page .content { background: rgba(255,255,255,0.08); backdrop-filter:blur(10px); padding:30px; border-radius:20px; width:100%; max-width:400px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3); animation: fadeInUp 0.8s ease forwards; }
+.project-page { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:flex-start; background:rgba(0,0,0,0.95); color:#fff; padding:30px 20px; z-index:1000; transform:translateX(100%); transition:0.5s ease; overflow-y:auto; }
+.project-page.active { transform:translateX(0); }
+
+/* Profile */
+.profile-img { width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid #fff; margin-bottom:15px; animation: fadeInUp 0.8s ease forwards; }
+h1 { font-size:24px; margin-bottom:5px; animation: fadeInUp 0.8s ease forwards; }
+.role { font-size:14px; opacity:0.8; margin-bottom:15px; animation: fadeInUp 0.8s ease forwards; }
+.desc { font-size:14px; line-height:1.6; margin-bottom:20px; animation: fadeInUp 0.8s ease forwards; }
+
+/* Socials */
+.socials a { display:block; text-decoration:none; background: rgba(255,255,255,0.15); color:#fff; padding:12px; border-radius:10px; margin:8px 0; transition:0.3s; font-weight:bold; }
+.socials a:hover { transform:scale(1.05) rotate(-2deg); box-shadow:0 6px 15px rgba(0,0,0,0.4); background:#17a44a; }
+
+/* Left Socials */
+.left-socials { position:fixed; left:15px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; z-index:999; transition:0.3s; }
+.left-socials.hide { opacity:0; pointer-events:none; }
+.left-socials a { width:45px; height:45px; background: rgba(255,255,255,0.15); backdrop-filter:blur(8px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; transition:0.3s; box-shadow:0 6px 15px rgba(0,0,0,0.3); opacity:0; animation: slideInLeft 0.6s forwards; position:relative; }
+.left-socials a:nth-child(1){ animation-delay:0.1s; }
+.left-socials a:nth-child(2){ animation-delay:0.3s; }
+.left-socials a:nth-child(3){ animation-delay:0.5s; }
+.left-socials a:hover{ transform:scale(1.15); }
+.left-socials a.ig:hover{ background:#E1306C; }
+.left-socials a.yt:hover{ background:#FF0000; }
+.left-socials a.tg:hover{ background:#0088cc; }
+.left-socials a::after { content: attr(data-tooltip); position:absolute; left:60px; top:50%; transform:translateY(-50%) translateX(20px); background:rgba(0,0,0,0.8); color:#fff; padding:5px 10px; border-radius:6px; white-space:nowrap; font-size:14px; opacity:0; pointer-events:none; transition:0.3s; }
+.left-socials a:hover::after { opacity:1; transform:translateY(-50%) translateX(0); }
+
+/* Portfolio */
+.portfolio { margin-top:20px; text-align:left; }
+.portfolio h3 { font-size:16px; margin-bottom:10px; opacity:0.9; }
+.project-card { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.1); padding:10px 12px; border-radius:10px; margin-bottom:8px; transition:0.3s; cursor:pointer; }
+.project-card i { font-size:22px; color:#1db954; }
+.project-card p { font-size:12px; opacity:0.8; }
+.project-card:hover { transform:scale(1.03); background:rgba(255,255,255,0.18); }
+
+/* Project Page */
+.project-page .back-btn { position:fixed; top:20px; left:20px; background:#1db954; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; font-weight:bold; z-index:1010; }
+.project-page img { width:100%; max-width:600px; border-radius:12px; margin-bottom:20px; box-shadow:0 6px 20px rgba(0,0,0,0.5); transition:opacity 0.4s ease; opacity:1; }
+.project-page h2 { font-size:22px; margin-bottom:10px; }
+.project-page p { font-size:16px; line-height:1.6; margin-bottom:15px; }
+.project-page ul { margin-left:20px; margin-bottom:20px; }
+.project-page li { margin-bottom:8px; }
+.slide-controls { display:flex; justify-content:center; gap:10px; margin-bottom:20px; }
+.slide-controls button { padding:8px 15px; border:none; border-radius:8px; cursor:pointer; background:#1db954; color:#fff; font-weight:bold; transition:0.3s; }
+.slide-controls button:hover { background:#17a44a; }
+
+/* Music Float */
+.music-float { position:fixed; bottom:20px; right:20px; width:55px; height:55px; border-radius:50%; background:#1db954; display:flex; justify-content:center; align-items:center; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,0.4); transition:0.3s; z-index:999; }
+.music-float:hover { transform:scale(1.1); background: rgba(255,255,255,0.15); }
+.bars { display:flex; align-items:flex-end; gap:3px; height:24px; }
+.bars span { display:block; width:4px; height:6px; background:#fff; border-radius:2px; animation:bounce 1s infinite; animation-play-state:paused; }
+.bars span:nth-child(1){ animation-delay:0s; }
+.bars span:nth-child(2){ animation-delay:0.2s; }
+.bars span:nth-child(3){ animation-delay:0.4s; }
+.bars span:nth-child(4){ animation-delay:0.6s; }
+.music-float.playing .bars span{ animation-play-state:running; }
+@keyframes bounce { 0%,100%{height:6px;} 50%{height:20px;} }
+
+.slide-indicators span{
+  display:inline-block;
+  width:10px; height:10px;
+  background:rgba(255,255,255,0.4);
+  border-radius:50%;
+  cursor:pointer;
+  transition:0.3s;
+}
+.slide-indicators span.active{
+  background:#1db954;
+  transform: scale(1.2);
+}
+
+
+ .music-tooltip{
+  position:absolute;
+  bottom:65px;
+  right:0;
+  background:rgba(0,0,0,0.8);
+  color:#fff;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:8px;
+  white-space:nowrap;
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:0.3s;
+}
+
+/* muncul pas hover (desktop) */
+.music-float:hover .music-tooltip{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* mobile auto muncul */
+.music-tooltip.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* CV & Visitor */
+.cv-btn{ display:inline-block; margin-top:10px; text-decoration:none; padding:10px 20px; background:#ff5722; color:#fff; border-radius:10px; font-weight:bold; transition:0.3s; }
+.cv-btn:hover{ background:#e64a19; transform:scale(1.05); }
+.visitor { margin-top: 10px; font-size: 13px; opacity: 0.7; text-align:center; }
+
+.visitor-counter{
+  font-size: 12px;
+  opacity: 0.6;
+  text-align: center;
+  margin-top: 15px;
+}
+
+@media(max-width:600px){ .project-page .content{ margin:100px 15px 40px 15px; } .music-float{ width:45px; height:45px; } .left-socials a{ width:40px; height:40px; font-size:18px; }
+}
+
+#project-media.fade{
+  opacity:0;
+}
+#project-media{
+  transition:opacity 0.3s ease;
+}
+</style>
+</head>
+<body>
+
+<!-- Left Socials -->
+<div class="left-socials">
+  <a href="https://www.instagram.com/sakh4n4a?igsh=aTltZWoxaHB5dnFy" class="ig" target="_blank" data-tooltip="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="https://youtube.com/@sakhahack20?si=2T5oXUHSK1Mj97b5" class="yt" target="_blank" data-tooltip="Youtube"><i class="fab fa-youtube"></i></a>
+  <a href="https://t.me/CallMeSakha" class="tg" target="_blank" data-tooltip="Telegram"><i class="fab fa-telegram"></i></a>
+</div>
+
+<!-- Main Container -->
+<div class="container">
+  <img src="https://files.catbox.moe/e6z210.jpg" alt="Foto Profil" class="profile-img" />
+  <h1>Sakha</h1>
+  <div class="role">Web Developer • Bot Developer</div>
+  <p class="desc">Saya adalah pengembang web dan bot Telegram/WhatsApp. Fokus pada Node.js, HTML, dan automasi.</p>
+
+  <div class="socials">
+    <a href="https://web-lagu.vercel.app/">Jgn D Pnct!</a>
+  </div>
+
+  <div class="portfolio">
+    <h3>🚀 Projects</h3>
+    <div class="project-card" onclick="openProject('xlasser')">
+      <i class="fas fa-robot"></i>
+      <div>
+        <strong>XLasser Private</strong>
+        <p>Telegram Bot Automation</p>
+      </div>
+    </div>
+    <div class="project-card" onclick="openProject('wa')">
+      <i class="fab fa-whatsapp"></i>
+      <div>
+        <strong>WhatsApp Bug Tools</strong>
+        <p>WA Automation & Tools</p>
+      </div>
+    </div>
+    <div class="project-card" onclick="openProject('web')">
+      <i class="fas fa-globe"></i>
+      <div>
+        <strong>Web Profile</strong>
+        <p>HTML • CSS • JS</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="files/Khaa_CV.pdf" class="cv-btn" download>Download CV</a>
+  <div class="visitor-counter">👀 <span id="visitor-count">0</span> visits</div>
+  <footer>© 2025 ʂαƙԋα</footer>
+</div>
+
+<!-- Project Page -->
+<div class="project-page" id="project-page">
+  <button class="back-btn" onclick="closeProject()">⬅ Back</button>
+  <div class="content">
+   <div id="project-media"></div>
+    <h2 id="project-title"></h2>
+    <p id="project-desc"></p>
+    <ul id="project-features"></ul>
+    <div class="slide-indicators" id="slide-indicators" style="display:flex;justify-content:center;gap:8px;margin-bottom:20px;"></div>
+    <div class="slide-controls">
+      <button onclick="prevSlide()">⬅ Prev</button>
+      <button onclick="nextSlide()">Next ➡</button>
+    </div>
+  </div>
+</div>
+
+<!-- Music -->
+<div class="music-float" onclick="toggleMusic()">
+  <div class="bars"><span></span><span></span><span></span><span></span></div>
+  <div class="music-tooltip">Tap icon to play music 🎵</div>
+</div>
+<audio id="bg-music" loop>
+  <source src="https://files.catbox.moe/35qb4j.m4a" type="audio/mp4">
+</audio>
+
+<script>
+/* Music */
+const music = document.getElementById("bg-music");
+const musicBtn = document.querySelector('.music-float');
+const tooltip = document.querySelector(".music-tooltip");
+let isPlaying = false;
+
+let musicVolume = 1; // volume normal
+let duckVolume = 0.15; // volume saat video play
+let fadeInterval = null;
+
+music.volume = musicVolume;
+
+function fadeMusic(target, duration = 300) {
+  clearInterval(fadeInterval);
+  
+  const step = 0.02;
+  const interval = duration / (1 / step);
+  
+  fadeInterval = setInterval(() => {
+    if (Math.abs(music.volume - target) < step) {
+      music.volume = target;
+      clearInterval(fadeInterval);
+      return;
+    }
+    music.volume += music.volume < target ? step : -step;
+  }, interval);
+}
+
+/* tampilkan tooltip di awal (mobile friendly) */
+setTimeout(()=>{
+  if(!isPlaying){
+    tooltip.classList.add("show");
+  }
+}, 1500);
+
+function toggleMusic(){
+  if(!isPlaying){
+    music.play().catch(()=>{});
+    isPlaying = true;
+    musicBtn.classList.add('playing');
+    tooltip.classList.remove("show");
+  } else {
+    music.pause();
+    isPlaying = false;
+    musicBtn.classList.remove('playing');
+  }
+}
+
+/* Visitor Counter */
+fetch("https://sakha-dev.goatcounter.com/counter/visits.json")
+  .then(r => r.json())
+  .then(d => document.getElementById("visitor-count").textContent = d.count.toLocaleString("id-ID"))
+  .catch(() => document.getElementById("visitor-count").textContent = "0");
+/* Projects */
+const projects = {
+  xlasser: {
+    title:"XLasser Series",
+    desc:"Bot Telegram dengan sistem premium & automasi WhatsApp",
+    slides:[
+      {img:"https://files.catbox.moe/n6kwtk.jpeg", text:["Hi gw Sakha, disini gw mau ngenalin bot bug wa versi telegram ciptaan gw sendiri, nah sebelum masuk ke pembahasan, lu pada tahu gak apa itu bot bug? xixixi, pasti pada belum tahu kan? atau udah pada tahu ya, kalau udah pada tahu gw tempe yaa wkwk, ap si garing bngt.",
+      "Pertama-tama gw jelasin dulu nih 'What is meant by bot bug' sok Inggris😹, jadi bot bug yaitu bot yang memanfaatkan celah keamanan, fungsi, dan kelemahan teknis pada apk whatsapp. Nah tujuannya itu membuat aplikasi whatsapp jadi crash, error, delay, dll.",
+      "Nah jadi itu dia penjelasan tenta- 🗣️ lah berarti bot bug fungsinya buat ngerugiin orang dong? hmm gak juga sih tergantung si pemakainya, misalnya gini : lu punya mantan terus mantan lu sering terror lu buat ngajak balikan, nah lu manfaatin bot ini buat bug no mantan lu biar dia gak terror lu terus.",
+        "🗣️ Tapikan bisa langsung blokir aja nomornya, gak harus ribet pake bug! blokir? kurang seruu kalau cuman sebatas blokir, lebih bagus pake bug biar rapih mainnya😼. Udah ah malah jadi bahas mantan, mending langsung lanjut aja ke pembahasan."
+      ]},
+      {img:"https://files.catbox.moe/ast4i7.jpg", text:["ꉧ Ⱡ₳₴₴ɆⱤ V1 (Type Button & Cmd)", 
+        "First Project Yang dilengkapi Dengan Fitur:", 
+        "𝗠𝗲𝗻𝘂 𝗕𝘂𝗴 👾", 
+        "Delay Chat ✅", 
+        "Spam Call ✅", 
+        "Delay UI ✅", 
+        "Crash Chat ✅", 
+        
+        
+        "𝗢𝘄𝗻𝗲𝗿 𝗠𝗲𝗻𝘂 👑", 
+        "Add pairing ✅", 
+        "Add admin/Del admin ✅", 
+        "Add prem/Del prem ✅", 
+        "Cek user ✅", 
+        
+        
+        "𝗗𝗲𝘀𝗸𝗿𝗶𝗽𝘀𝗶 𝗧𝗮𝗺𝗯𝗮𝗵𝗮𝗻", 
+        "Sebelum lanjut, pasti banyak yang bertanya-tanya 'Gimana cara ngebuat si bot itu bisa berjalan sistemnya and gimana caranya kita ngelakuin bug ke target yang kita mau', oke gw bakal jelasin 1/1 dari pertnyaan tadi.", 
+        
+        "Cara kita biar bisa ngebuat bot itu bisa berjalan sistemnya caranya itu lewat panel, nah apa itu panel? panel adalah dashboard berbasis web yang dipakai untuk megelola, menjalankan, dan memantau program otomatis bot. Jadi kalau pake panel otomatis bot bakal jalan terus kayak hubungan kita berdua🤭, aduhh maaf orang yang ngebuat web ini suka ngehalu jadi tolong di maklumin yaa, maksudnya otomatis bot bakal berjalan selama 24 jam secara terus-menerus dengan syarat system panel harus tetap menyala.",
+        "Lanjut 'gimana caranya kita ngelakuin bug ke target' bisa di bilang itu mah hal basic, anak kecil juga bisa, caranya lu tinggal ngikutin rules² dari si bot. Contohnya kalau lu mau bikin target jadi delay wa nya lu ketik (/delay 62xxxxxxxx) terus tinggal send message dan ya beres kayak hubungan ki- maaf kumat🙏",
+      ]
+      },
+      {img:"https://files.catbox.moe/nblw44.jpg", text:["ꉧ Ⱡ₳₴₴ɆⱤ V2 (Same Type) ",
+        "Cuman Penyesuaian Kecil Sama Penambahan Fitur-fitur Like This:", 
+        "Blank Ui ✅", 
+        "Buldozer (Sedot Kouta) ✅", 
+        "Cooldown Message ✅", 
+        "𝗣𝗲𝗻𝗷𝗲𝗹𝗮𝘀𝗮𝗻",
+        "Oke sekarang gw mau jelasin tentang fitur-fitur bug kayak efeknya itu gimana sih?. Jadi yang pertama ada delay, konsepnya delay itu nanti pas target ngechat itu gak bakal langsung ke kirim, yaa si text nya itu bakal hilang (mau dia spam chat juga tetep bakal hilang chatnya).", 
+        "Lanjut yang kedua ✌ yaitu spam call, ini nih type bug yang paling gw suka😚, spam call punya konsep yang simple, jadi nanti target bakal di terror lewat telpon terus-menerus and klo dia reject/delince telponnya gak bakal bisa, ya kalau dibiarin nanti hp target bisa jadi delay/lemot kayak dia yang gak pek- eh maaf tadi ada air tumpah ke keyboardnya jadi otomatis ngetik hehe.", 
+        "Lanjut lagi yang ketiga ada delay ui, konsep delay ui sama aja kayak delay biasa cuman bedanya ini bisa nembus ke ui hp target tapi gak work ke semua hp ya.",
+        "Hmm yang keempat ada crash, konsep dari crash itu cukup rumit buat dijelasin tapi no what what gwah jelasin😼, oke kalau target lu kena bug crash nanti otomatis aplikasi wa dia bakal crash/kadang² kalau hp dia gak kuat (Hp 🥔) bisa jadi ui hp dia ikutan crash because dosis yang dikasih sama bot yang terlalu berlebihan yang ngebuat hp dia jadi ikutan crash, ngerinya😱",
+        "Next yang kelima ada blank, nah sejujurnya i lop u, eh sorry kucing gw yang ngetik, jujur si blank itu kurang enak buat di jadiin bahan bug meskipun efeknya ngebuat hp target jadi hitam kayak masa depannya, cuman ada sender yang harus di korbanin (sender itu pengirim/penghantar bug ke target nah sendernya sendiri berbasis wa, jadi lu kalau mau ngebug harus punya sender/no wa yang gak kepakai buat lu jadiin tumbal) 🗣️ Maksudnya korbanin apa bre? ya jadi nanti ada kemungkinan sender bisa kenon (ke nonaktifkan) no wa nya😌",
+        "Yang terakhir ada buldozer, nah ini sih bisa dibilang fitur bug yang lumayan ngeselin, kok bisa ngeselin? yaa karena kalau si target kena bug buldozer nanti wa dia bakal delay kayak efek delay sebelumnya cuman ini tuh punya jangka waktu yang bisa dibilang lama, kenapa lama? karena adanya efek tambahan yaitu penyedot kuota🤪, 🗣️ Tinggal pake wifi ae sii, eits meskipun lu mau pake wifi delay masih tetep jalan selagi batas kouta yang dia sedot belum terpenuhi."
+      ]},
+      {vid:"https://files.catbox.moe/7rdaz7.mp4", text:["ꉧ Ⱡ₳₴₴ɆⱤ V3 (Type Cmd)", 
+        "(Karena fotonya gak ada jadi diganti sama video jeje😌) Perubahan Base dan Penghapusan Fitur-fitur Supaya Jadi Lebih Simple", 
+        "𝗠𝗲𝗻𝘂 𝗕𝘂𝗴 👾",
+        "Blank Ui ✅", 
+        "Killer Ui ✅", 
+        "Crash Ui ✅", 
+        "Freeze UI ✅", 
+        "𝗣𝗲𝗻𝗷𝗲𝗹𝗮𝘀𝗮𝗻", 
+        "Ya kyak yang lu pada liat ada new type bug yaitu freeze, nah konsep bug freeze ini bisa ngebuat hp target jadi ngefreeze/gak bisa di apa apain yaudah beku kyak hati di- kebanyakan make pembuat web nya😓, 🗣️ kalau fitur killer ui gimana tuch? good question kalau untukmu eh maksudnya buat fitur killer ui itu sebenernya delay ui cuman diganti aja namanya so kayak gimick👀. Lanjut fitur-fitur yang di hapus ada fitur admin smaa cek user.",
+      ]},
+      {img:"https://files.catbox.moe/bz54jy.jpg", text:["ꉧ Ⱡ₳₴₴ɆⱤ V4 (Same Type) ",
+        "Pemanambahan fitur-fitur bug baru dan lama", 
+        "Delay ✅", 
+        "Combo Prototype ✅", 
+        "𝗣𝗲𝗻𝗷𝗲𝗹𝗮𝘀𝗮𝗻", 
+        "'Apa itu Combo Prototype?' Prototype yaitu type bug delay tapi punya waktu jangka panjang bahkan bisa bersifat permanen, ya itu ngerugiin banget si buat target apalagi kalo sampe jadi permanen, kayak luka di hat- eh."
+      ]},
+      {img:"https://files.catbox.moe/750w7t.jpg", text:["ꉧ Ⱡ₳₴₴ɆⱤ V5 Last Version (Type Button & Msg) ",
+        "Huh, Last Version ꉧ Ⱡ₳₴₴ɆⱤ Dilengkapi Dengan Fitur-fitur Premium, Multi Sender, dan Jenis-jenis Bug Baru.", 
+        "𝟮 𝗠𝗲𝗻𝘂 𝗕𝘂𝗴 👾",
+        "𝗣𝗿𝗲𝗺𝗶𝘂𝗺 𝗠𝗲𝗻𝘂 𝗕𝘂𝗴 🪐", 
+        "Buldozer ✅", 
+        "Clasic Delay ✅", 
+        "Delay IPhone ✅", 
+        "Clasic Crash ✅", 
+        "Crash Ui ✅", 
+        "Freeze UI ✅", 
+        
+        "𝗩𝗶𝗽 𝗠𝗲𝗻𝘂 𝗕𝘂𝗴 💫",
+        "Hard Delay ✅", 
+        "Delay Invisible ✅", 
+        "Blank Ui ✅", 
+        "Blank IPhone ✅", 
+        "Combo Prototype ✅", 
+        "Force Close WA B ✅", 
+        "Force Close Invisible ✅", 
+        "Nova Crash ✅", 
+        
+        "𝗢𝘄𝗻𝗲𝗿 𝗠𝗲𝗻𝘂 👑", 
+        "Add admin/Del Admin ✅", 
+        "Add vip/Del vip ✅", 
+        "Add prem/Del prem ✅", 
+        "List bot/Sender ✅", 
+        "Add bot/Sender ✅", 
+        "Cooldown ✅", 
+        
+        "𝗣𝗲𝗻𝗷𝗲𝗹𝗮𝘀𝗮𝗻", 
+        "Oke kita langsung masuk kepembahasan pertama yaitu tentang multi sender, nah maksud dari multi sender itu jadi si sender yang buat ngirim bug itu gak cuman satu doang bisa di tambah lagi sepuasnya yang lu mau, lu juga bisa lebih leluasa buat ngebug target tanpa harus mikirin tentang sendernya karena sendernya lebih dari 1, jadi kalau sender 1 kenon bisa pindah ke sender 2 (Sasimo jing).", "Oke kita masuk ke bagian premium menu bug, yang pertama ada delay iphone, ya dia semacam jenis delay biasa cuman bedanya khusus buat ip.", 
+        "Yang kedua ada crash ui, type bug ini hampir mirip sama delay ui cuman dia agak ganas dikit. And sisanya masih sama kayak sebelumnya", 
+        "Next vip menu bug, waduh lumayan panjang ya, tapi gapapa im okay 😼. Nah yang pertama ada hard delay, yaa kayak semacam delay pada umumnya cuman dia punya jangka waktu yang panjang.", 
+        "Lanjut yankk kedua delay invisible, type bug ini gw recommended sih soalnya kalau target kena bug nah si bug nya itu gak keliatan kayak cint-", 
+        "Next yang ketiga ada Blank iphone, hemm type bug yang satu ini kayak blank biasanya cuman bedanya khusus buat ip.", 
+        "Next lagi yang keempat ada force close Wa B (WhatsApp Bussiness) type bug yang ini sih cocok buat lu yang lagi kesel sama target lu, misalnya lu di spam chat sama ayank lu, padahal lu itu lagi sibuk dan gak bisa di ganggu, dan lu mutusin buat ngebug dia pake fc/force close nah nanti pov hp ayank lu pas buka wa otomatis keluar lagi and itu bakal terjadi berulang-ulang sampe si bug nya di fix sama pihak whatsapp xixi, cuman sayangnya buat type fc yang satu ini khusus whatsapp bussiness.", 
+        "Nah ini dia yang kelima force close invisible, kan kalau yang tadi fc biasa + khusus wa b nah kalau yang ini fc invis bedanya apa cii?? nah bedanya ̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶k̶̶̶̶y̶̶̶a̶̶k ̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶̶p̶̶̶̶̶e̶̶̶̶r̶̶̶a̶̶̶s̶̶a̶̶n ̶̶̶̶̶̶̶̶̶k̶̶̶̶m̶ ̶k̶̶e ̶̶a̶k fc biasa itu dia isi chat nya masih keliatan gak kayak fc invis yang isi chatnya gak ngebuat bekas sama sekali, jadi keliatan lebih rapih dan profesional asekkk😎", 
+        "And last ada nova crash, ini sih cocok buat lu yang mau ngerjain temen lu because bug nova crash ini bisa ngebuat hp target jadi ngestuck di logo wa, but type bug ini gak work di semua device.", 
+      ]},
+      {img:"https://files.catbox.moe/tkpv99.jpg", text:["ꉧ Ⱡ₳₴₴ɆⱤ PRIVATE 0.1.0",
+        "Panjang kalau di deskripsiin tapi kalau lu kepo dan pngen tau next time gw bakal update nih web tungguin aja nanti di tgl 2-3. Pantau aja terus and see you next time 👋"
+      ]}
+    ]
+  },
+  wa:{title:"WhatsApp Bug Tools", desc:"Tools automasi WhatsApp untuk testing & research.", img:"https://files.catbox.moe/n6kwtk.jpeg", features:["Automation","Testing","Research"]},
+  web:{title:"Web Profile", desc:"Web profile modern dengan animasi & UI clean.", img:"https://files.catbox.moe/n6kwtk.jpeg", features:["HTML","CSS","JavaScript"]}
+};
+
+let currentProject = null;
+let currentSlide = 0;
+const lockedProjects = ["wa", "web"]
+
+function openProject(type) {
+  if (lockedProjects.includes(type)) {
+    alert("🚧 Opss project ini masih dalam tahap pengembangan.\nSilakan cek kembali nanti.");
+    return;
+  }
+  
+  currentProject = projects[type];
+  document.getElementById("project-title").innerText = currentProject.title;
+  document.getElementById("project-desc").innerText = currentProject.desc;
+  document.getElementById("project-page").classList.add("active");
+  document.querySelector('.left-socials').classList.add("hide");
+  
+  if (currentProject.slides) {
+    currentSlide = 0;
+    showSlide();
+  } else {
+    const img = document.getElementById("project-img");
+    img.src = currentProject.img;
+    const list = document.getElementById("project-features");
+    list.innerHTML = "";
+    currentProject.features.forEach(f => {
+      const li = document.createElement("li");
+      li.textContent = "• " + f;
+      list.appendChild(li);
+    });
+    document.getElementById("slide-indicators").innerHTML = "";
+  }
+}
+
+function showSlide() {
+  if (!currentProject || !currentProject.slides) return;
+  
+  const media = document.getElementById("project-media");
+  const list = document.getElementById("project-features");
+  const indicators = document.getElementById("slide-indicators");
+  const slide = currentProject.slides[currentSlide];
+  
+  // placeholder
+  media.classList.add("fade");
+  const oldVideo = media.querySelector("video");
+if (oldVideo) oldVideo.pause();
+  media.innerHTML = `
+    <div style="
+      height:200px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,0.1);
+      border-radius:12px;
+      font-size:14px;
+      opacity:0.8;
+    ">
+      Loading media…
+    </div>
+  `;
+  
+  setTimeout(() => {
+    media.innerHTML = "";
+    
+    if (slide.img) {
+      const img = document.createElement("img");
+      img.src = slide.img;
+      img.style.width = "100%";
+      img.style.borderRadius = "12px";
+      media.appendChild(img);
+    }
+    
+   if (slide.vid) {
+  const video = document.createElement("video");
+  video.src = slide.vid;
+  video.controls = true;
+  video.preload = "metadata";
+  video.playsInline = true;
+  video.style.width = "100%";
+  video.style.borderRadius = "12px";
+  
+  video.addEventListener("play", () => {
+    if (isPlaying) fadeMusic(duckVolume);
+  });
+  
+  video.addEventListener("pause", () => {
+    if (isPlaying) fadeMusic(musicVolume);
+  });
+  
+  video.addEventListener("ended", () => {
+    if (isPlaying) fadeMusic(musicVolume);
+  });
+  
+  media.appendChild(video);
+}
+    
+    list.innerHTML = slide.text.map(t => `<li>${t}</li>`).join("");
+    
+    indicators.innerHTML = "";
+    currentProject.slides.forEach((_, i) => {
+      const dot = document.createElement("span");
+      if (i === currentSlide) dot.classList.add("active");
+      dot.onclick = () => {
+        currentSlide = i;
+        showSlide();
+      };
+      indicators.appendChild(dot);
+    });
+    
+    media.classList.remove("fade");
+  }, 200);
+  
+  preloadNextVideo();
+}
+
+ function preloadNextVideo() {
+  if (!currentProject || !currentProject.slides) return;
+  
+  const next = currentProject.slides[currentSlide + 1];
+  if (next && next.vid) {
+    const v = document.createElement("video");
+    v.src = next.vid;
+    v.preload = "metadata";
+  }
+}
+
+function nextSlide(){
+  currentSlide = (currentSlide+1)%currentProject.slides.length;
+  showSlide();
+}
+
+function prevSlide(){
+  currentSlide = (currentSlide-1+currentProject.slides.length)%currentProject.slides.length;
+  showSlide();
+}
+
+function closeProject(){
+  document.getElementById("project-page").classList.remove("active");
+  document.querySelector('.left-socials').classList.remove("hide");
+
+  const video = document.querySelector("#project-media video");
+  if (video) video.pause();
+
+  if (isPlaying) fadeMusic(musicVolume);
+}
+</script>
+
+<script
+  data-goatcounter="https://sakha.goatcounter.com/count"
+  async
+  src="https://gc.zgo.at/count.js">
+</script>
+
+</body>
+</html>
